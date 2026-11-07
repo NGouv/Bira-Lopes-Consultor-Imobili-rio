@@ -16,7 +16,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
-    <script src="script.js" defer></script>
+    <script type="module" src="script.js"></script>
   </head>
   <body>
     <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
@@ -96,8 +96,14 @@
             </div>
             <div class="property-track" id="property-track" role="region" aria-label="Imóveis em destaque" tabindex="0"></div>
           </div>
+          <p class="catalog-status" id="catalog-status" role="status" aria-live="polite"></p>
+          <nav class="catalog-pagination" id="catalog-pagination" aria-label="Paginação dos imóveis" hidden>
+            <button class="carousel-button" type="button" data-page-step="-1" aria-label="Página anterior" disabled>←</button>
+            <span id="catalog-page-label"></span>
+            <button class="carousel-button" type="button" data-page-step="1" aria-label="Próxima página">→</button>
+          </nav>
           <p class="disclaimer">
-            <span aria-hidden="true">✳</span> Imóveis, imagens e valores meramente ilustrativos, apresentados como exemplo.
+            <span aria-hidden="true">✳</span> Consulte disponibilidade e condições diretamente com o consultor.
           </p>
         </div>
       </section>
@@ -165,6 +171,39 @@
           <p class="contact-description">
             Entre em contato para conhecer as oportunidades e conversar sobre o que você procura.
           </p>
+          <form class="lead-form" id="lead-form">
+            <input name="empreendimento_id" type="hidden" />
+            <div class="lead-form-grid">
+              <label>Nome
+                <input name="nome" autocomplete="name" maxlength="120" required />
+              </label>
+              <label>Telefone
+                <input name="telefone" type="tel" autocomplete="tel" maxlength="24" required />
+              </label>
+              <label>E-mail <span>(opcional)</span>
+                <input name="email" type="email" autocomplete="email" maxlength="254" />
+              </label>
+              <label>Tenho interesse em
+                <select name="tipo_interesse" required>
+                  <option value="comprar">Comprar um imóvel</option>
+                  <option value="investir">Investir</option>
+                  <option value="empreendimento">Um empreendimento específico</option>
+                </select>
+              </label>
+            </div>
+            <label>Mensagem
+              <textarea name="mensagem" rows="4" maxlength="2000" required></textarea>
+            </label>
+            <label class="lead-form-trap" aria-hidden="true">Deixe este campo vazio
+              <input name="website" tabindex="-1" autocomplete="off" />
+            </label>
+            <div class="turnstile-slot" id="turnstile-container"></div>
+            <p class="lead-form-status" id="lead-form-status" role="status" aria-live="polite"></p>
+            <button class="button button-dark" id="lead-submit" type="submit" disabled>
+              Enviar mensagem <span aria-hidden="true">↗</span>
+            </button>
+            <p class="lead-form-note" id="lead-form-note">O envio seguro do formulário precisa ser configurado pelo administrador do site. Você também pode entrar em contato pelo WhatsApp.</p>
+          </form>
           <button class="button button-dark whatsapp-link" type="button" data-message="Olá, Bira! Gostaria de conversar sobre o meu próximo imóvel.">
             Chamar no WhatsApp <span aria-hidden="true">↗</span>
           </button>

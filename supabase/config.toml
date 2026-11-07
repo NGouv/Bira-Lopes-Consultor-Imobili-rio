@@ -1,0 +1,4 @@
+project_id = "bira-lopes-imobiliaria"
+
+[functions.submit-lead]
+verify_jwt = false

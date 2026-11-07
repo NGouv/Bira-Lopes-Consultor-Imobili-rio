@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#102d3a" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="description" content="Área administrativa de Bira Lopes Consultoria Imobiliária." />
+    <title>Painel administrativo | Bira Lopes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script type="module" src="/src/admin.js"></script>
+  </head>
+  <body class="admin-body">
+    <header class="admin-header">
+      <a class="wordmark" href="index.html" aria-label="Bira Lopes, voltar ao site">
+        <img class="brand-logo" src="assets/logo-trans.png" alt="" />
+        <span class="wordmark-copy">
+          <span class="wordmark-name">Bira Lopes</span>
+          <span class="wordmark-role">Painel administrativo</span>
+        </span>
+      </a>
+      <div class="admin-header-actions" id="admin-header-actions" hidden>
+        <span id="admin-user-label"></span>
+        <button class="admin-button admin-button-outline" id="logout-button" type="button">Sair</button>
+      </div>
+    </header>
+
+    <main class="admin-main">
+      <p class="admin-notice" id="admin-notice" role="status" aria-live="polite"></p>
+
+      <section class="admin-login-card" id="admin-login">
+        <p class="eyebrow"><span></span> Acesso restrito</p>
+        <h1>Entrar no painel</h1>
+        <p>Use a conta administrativa cadastrada no Supabase.</p>
+        <form id="login-form">
+          <label for="login-email">E-mail</label>
+          <input id="login-email" name="email" type="email" autocomplete="username" required />
+          <label for="login-password">Senha</label>
+          <input id="login-password" name="password" type="password" autocomplete="current-password" required />
+          <button class="admin-button admin-button-primary" id="login-submit" type="submit">Entrar</button>
+        </form>
+        <a class="admin-back-link" href="index.html">Voltar ao site</a>
+      </section>
+
+      <section class="admin-app" id="admin-app" hidden>
+        <div class="admin-page-heading">
+          <div>
+            <p class="eyebrow"><span></span> Gestão imobiliária</p>
+            <h1 id="admin-page-title">Visão geral</h1>
+          </div>
+          <span class="admin-role-badge" id="admin-role-badge"></span>
+        </div>
+
+        <nav class="admin-nav" aria-label="Navegação administrativa">
+          <button class="admin-nav-button is-active" data-view="dashboard" type="button">Visão geral</button>
+          <button class="admin-nav-button" data-view="properties" type="button">Empreendimentos</button>
+          <button class="admin-nav-button" data-view="leads" id="leads-nav" type="button">Contatos</button>
+        </nav>
+
+        <section class="admin-view" id="dashboard-view">
+          <div class="admin-stats" id="admin-stats"></div>
+          <section class="admin-panel">
+            <div class="admin-panel-heading">
+              <div>
+                <p class="eyebrow"><span></span> Relacionamento</p>
+                <h2>Contatos recentes</h2>
+              </div>
+              <button class="admin-button admin-button-outline" data-open-view="leads" id="view-all-leads" type="button">Ver contatos</button>
+            </div>
+            <div class="admin-list" id="dashboard-leads"></div>
+          </section>
+        </section>
+
+        <section class="admin-view" id="properties-view" hidden>
+          <section class="admin-panel">
+            <div class="admin-panel-heading">
+              <div>
+                <p class="eyebrow"><span></span> Catálogo</p>
+                <h2>Empreendimentos</h2>
+              </div>
+              <button class="admin-button admin-button-primary" id="new-property-button" type="button">Novo empreendimento</button>
+            </div>
+            <div class="admin-list" id="property-list"></div>
+            <nav class="admin-pagination" id="property-pagination" aria-label="Páginas de empreendimentos" hidden>
+              <button class="admin-button admin-button-outline" data-property-page="-1" type="button">Anterior</button>
+              <span id="property-page-label"></span>
+              <button class="admin-button admin-button-outline" data-property-page="1" type="button">Próxima</button>
+            </nav>
+          </section>
+        </section>
+
+        <section class="admin-view" id="leads-view" hidden>
+          <section class="admin-panel">
+            <div class="admin-panel-heading">
+              <div>
+                <p class="eyebrow"><span></span> Atendimento</p>
+                <h2>Contatos recebidos</h2>
+              </div>
+            </div>
+            <div class="admin-list" id="lead-list"></div>
+            <nav class="admin-pagination" id="lead-pagination" aria-label="Páginas de contatos" hidden>
+              <button class="admin-button admin-button-outline" data-lead-page="-1" type="button">Anterior</button>
+              <span id="lead-page-label"></span>
+              <button class="admin-button admin-button-outline" data-lead-page="1" type="button">Próxima</button>
+            </nav>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <dialog class="admin-dialog" id="property-dialog">
+      <form class="admin-editor-form" id="property-form">
+        <div class="admin-dialog-heading">
+          <div>
+            <p class="eyebrow"><span></span> Catálogo</p>
+            <h2 id="property-dialog-title">Novo empreendimento</h2>
+          </div>
+          <button class="admin-icon-button" data-close-dialog type="button" aria-label="Fechar">×</button>
+        </div>
+        <input name="id" type="hidden" />
+        <div class="admin-form-grid">
+          <label class="admin-field-wide">Título
+            <input name="titulo" maxlength="180" required />
+          </label>
+          <label>Slug
+            <input name="slug" maxlength="160" pattern="[a-z0-9]+(-[a-z0-9]+)*" required />
+          </label>
+          <label>Tipo de imóvel
+            <input name="tipo" maxlength="80" placeholder="Apartamento, casa..." required />
+          </label>
+          <label>Finalidade
+            <select name="finalidade" required>
+              <option value="venda">Venda</option>
+              <option value="aluguel">Aluguel</option>
+              <option value="lancamento">Lançamento</option>
+            </select>
+          </label>
+          <label>Status
+            <select name="status" required>
+              <option value="rascunho">Rascunho</option>
+              <option value="publicado">Publicado</option>
+              <option value="arquivado">Arquivado</option>
+            </select>
+          </label>
+          <label class="admin-field-wide">Descrição
+            <textarea name="descricao" rows="5" maxlength="12000" required></textarea>
+          </label>
+          <label class="admin-field-wide">Endereço
+            <input name="endereco" maxlength="240" />
+          </label>
+          <label>Bairro
+            <input name="bairro" maxlength="120" />
+          </label>
+          <label>Cidade
+            <input name="cidade" maxlength="120" value="São Luís" />
+          </label>
+          <label>Estado
+            <input name="estado" maxlength="2" value="MA" pattern="[A-Z]{2}" />
+          </label>
+          <label>Metragem (m²)
+            <input name="metragem" type="number" min="0.01" max="99999999.99" step="0.01" />
+          </label>
+          <label>Quartos
+            <input name="quartos" type="number" min="0" max="32767" step="1" />
+          </label>
+          <label>Banheiros
+            <input name="banheiros" type="number" min="0" max="32767" step="1" />
+          </label>
+          <label>Vagas
+            <input name="vagas" type="number" min="0" max="32767" step="1" />
+          </label>
+          <label>Preço (R$)
+            <input name="preco" type="number" min="0" max="999999999999.99" step="0.01" />
+          </label>
+          <label class="admin-field-wide">Descrição para SEO
+            <textarea name="descricao_seo" rows="2" maxlength="320"></textarea>
+          </label>
+          <label class="admin-field-wide">URL do YouTube
+            <input name="video_url" type="url" maxlength="2048" placeholder="https://youtu.be/..." />
+          </label>
+          <label class="admin-check"><input name="destaque" type="checkbox" /> Exibir como destaque</label>
+          <label class="admin-check"><input name="video_ativo" type="checkbox" /> Exibir vídeo no site</label>
+        </div>
+        <p class="admin-form-feedback" id="property-form-feedback" role="status" aria-live="polite"></p>
+        <div class="admin-form-actions">
+          <button class="admin-button admin-button-outline" data-close-dialog type="button">Cancelar</button>
+          <button class="admin-button admin-button-primary" id="save-property-button" type="submit">Salvar empreendimento</button>
+        </div>
+
+        <section class="admin-gallery" id="admin-gallery" hidden>
+          <div class="admin-panel-heading">
+            <div>
+              <p class="eyebrow"><span></span> Mídia</p>
+              <h3>Imagens do empreendimento</h3>
+            </div>
+          </div>
+          <label class="admin-upload">Adicionar imagens (JPEG, PNG, WebP ou AVIF, até 10 MB cada)
+            <input id="property-images" type="file" accept="image/jpeg,image/png,image/webp,image/avif" multiple />
+          </label>
+          <div class="admin-image-grid" id="property-image-list"></div>
+        </section>
+
+        <div class="admin-delete-row" id="property-delete-row" hidden>
+          <button class="admin-button admin-button-danger" id="delete-property-button" type="button">Excluir definitivamente</button>
+          <span>Esta ação exige confirmação e remove as imagens armazenadas.</span>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="admin-dialog admin-lead-dialog" id="lead-dialog">
+      <div class="admin-editor-form">
+        <div class="admin-dialog-heading">
+          <div>
+            <p class="eyebrow"><span></span> Contato</p>
+            <h2 id="lead-dialog-title">Detalhes do contato</h2>
+          </div>
+          <button class="admin-icon-button" data-close-dialog type="button" aria-label="Fechar">×</button>
+        </div>
+        <div class="admin-lead-details" id="lead-details"></div>
+        <div class="admin-form-actions">
+          <button class="admin-button admin-button-outline" data-close-dialog type="button">Fechar</button>
+          <a class="admin-button admin-button-primary" id="lead-whatsapp" target="_blank" rel="noopener noreferrer">Abrir WhatsApp</a>
+        </div>
+      </div>
+    </dialog>
+  </body>
+</html>
