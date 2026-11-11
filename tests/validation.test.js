@@ -83,12 +83,11 @@ test("accepts only URL-safe property slugs", () => {
 });
 
 test("validates property data, normalizes YouTube URLs, and rejects invalid values", () => {
-  const property = validateProperty({
+  const validProperty = {
     titulo: "Apartamento de teste",
     slug: "apartamento-de-teste",
     descricao: "Descrição válida para um empreendimento de teste.",
     tipo: "Apartamento",
-    finalidade: "venda",
     status: "rascunho",
     metragem: "120.5",
     quartos: "3",
@@ -99,8 +98,13 @@ test("validates property data, normalizes YouTube URLs, and rejects invalid valu
     descricao_seo: "",
     video_url: "https://youtu.be/abcdefghijk?feature=share",
     video_ativo: true,
-  });
+  };
+  for (const finalidade of ["venda", "aluguel", "lancamento"]) {
+    const property = validateProperty({ ...validProperty, finalidade });
+    assert.equal(property.finalidade, finalidade);
+  }
 
+  const property = validateProperty({ ...validProperty, finalidade: "venda" });
   assert.equal(property.metragem, 120.5);
   assert.equal(property.quartos, 3);
   assert.equal(property.video_url, "https://www.youtube.com/embed/abcdefghijk");
@@ -111,7 +115,7 @@ test("validates property data, normalizes YouTube URLs, and rejects invalid valu
       slug: "imovel-de-teste",
       descricao: "Descrição válida com tamanho suficiente.",
       tipo: "Casa",
-      finalidade: "venda",
+      finalidade: "invalid",
       status: "publicado",
       destaque: false,
       video_url: "https://youtube.com.evil.example/watch?v=abcdefghijk",

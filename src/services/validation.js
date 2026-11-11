@@ -194,6 +194,7 @@ export function validateProperty(input) {
   if (!["venda", "aluguel", "lancamento"].includes(input.finalidade)) {
     throw new ValidationError("Selecione uma finalidade válida.");
   }
+  result.finalidade = input.finalidade;
   if (!["rascunho", "publicado", "arquivado"].includes(input.status)) {
     throw new ValidationError("Selecione um status válido.");
   }
