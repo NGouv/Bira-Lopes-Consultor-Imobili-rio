@@ -57,14 +57,16 @@ O ambiente local está configurado para o projeto `yzupsiwriqhfbgbutbai`; a URL 
 O painel não possui signup, usuário ou senha padrão.
 
 1. Em **Authentication → Users**, convide/crie o usuário e confirme o e-mail. Não coloque senha no código.
-2. Copie o UUID do usuário e, no SQL Editor autenticado do projeto, associe seu perfil:
+2. Copie e confira o UUID do usuário. Como ainda não há administrador, associe o perfil inicial pelo **SQL Editor do projeto**, usando uma conta proprietária/confiável do projeto — nunca pelo navegador, cliente Supabase ou credenciais `anon`:
 
    ```sql
    insert into public.profiles (id, name, email, role)
    values ('<AUTH_USER_UUID>', '<NOME>', '<EMAIL_CONFIRMADO>', 'admin');
    ```
 
-3. Desative signup público em **Authentication → Settings**. Não conceda o papel `editor`: a migration 005 restringe o painel e as operações do catálogo a perfis `admin`.
+   O bootstrap privilegiado do SQL Editor não usa a identidade JWT de um usuário final (`auth.uid()` fica nulo). Em operações via API, o trigger impede que um usuário comum atribua a si mesmo ou a outro perfil o papel `admin`; a RLS também não permite que um usuário comum crie ou gerencie perfis. Não conceda `service_role` ao frontend.
+
+3. Desative signup público em **Authentication → Settings**. A migration 005 restringe o painel e as operações do catálogo a perfis `admin`; `editor` não concede acesso administrativo.
 4. Configure URLs de redirecionamento do Auth para os domínios de preview/produção utilizados.
 
 ## Formulário e proteção contra spam
@@ -89,7 +91,7 @@ Confirme no painel Cloudflare que os domínios publicados estão autorizados no 
 
 ## Storage de imagens
 
-`empreendimento-imagens` é privado, aceita JPEG, PNG, WebP e AVIF, com limite de 10 MiB por arquivo. O caminho começa pelo UUID do empreendimento. A tabela guarda somente o caminho; o catálogo e o painel geram URLs assinadas de curta duração.
+`empreendimento-imagens` é privado, aceita JPEG, PNG, WebP e AVIF, com limite de 10 MiB por arquivo. O caminho começa pelo UUID do empreendimento. A tabela guarda somente o caminho; visitantes não autenticados podem solicitar URLs assinadas apenas para imagens associadas a empreendimentos publicados. O cliente gera URLs com validade de cinco minutos; elas são links bearer e podem ser acessadas por quem as receber até expirarem. Imagens não publicadas e operações de escrita no bucket ficam restritas a admins após as migrations 005 e 006.
 
 O painel envia arquivos sequencialmente e remove o arquivo do Storage se a criação dos metadados falhar. Definição de capa e ordenação são operações transacionais via RPC. Backups e retenção do banco/Storage devem ser habilitados e testados de acordo com o plano e a política operacional do projeto.
 
