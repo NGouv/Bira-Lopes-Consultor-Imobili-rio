@@ -316,6 +316,7 @@ function renderPropertyDetail() {
   contact.href = createWhatsAppLink(propertyMessage(activeProperty));
   contact.target = "_blank";
   contact.rel = "noopener noreferrer";
+  contact.dataset.analyticsPosition = "property_detail";
   const formContact = node("a", "property-form-contact", "Prefiro enviar uma mensagem pelo formulário");
   formContact.href = `index.html?empreendimento=${encodeURIComponent(activeProperty.id)}#contato`;
   copy.append(price, contact, formContact);
@@ -546,8 +547,26 @@ document.addEventListener("click", (event) => {
 });
 
 document.addEventListener("click", (event) => {
-  const whatsappLink = event.target.closest(".whatsapp-link");
+  const whatsappLink =
+    event.target instanceof Element
+      ? event.target.closest(".whatsapp-link, a[href*='wa.me/']")
+      : null;
   if (!whatsappLink) return;
+
+  const eventData = {
+    event: "whatsapp_click",
+    page_path: window.location.pathname,
+    page_type: detailContent ? "property_detail" : "home",
+    button_position: whatsappLink.dataset.analyticsPosition || "unspecified",
+  };
+  if (detailContent && activeProperty) {
+    eventData.property_id = activeProperty.id;
+    eventData.property_slug = activeProperty.slug;
+  }
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push(eventData);
+
+  if (!whatsappLink.matches(".whatsapp-link")) return;
   event.preventDefault();
   window.open(
     createWhatsAppLink(
