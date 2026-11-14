@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#102d3a" />
+    <meta name="theme-color" content="#0f2a30" />
     <meta
       name="description"
       content="Imóveis de médio e alto padrão em São Luís, com atendimento personalizado de Bira Lopes, consultor imobiliário CRECI 6103."
@@ -23,16 +23,20 @@
     </script>
     <!-- End Google Tag Manager -->
     <title>Bira Lopes | São Luís, do seu jeito</title>
+    <link rel="icon" href="assets/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,400&family=Hanken+Grotesk:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="home-visual.css" />
     <script type="module" src="script.js"></script>
   </head>
-  <body>
+  <body class="home-page">
     <!-- Google Tag Manager (noscript) -->
     <noscript>
       <iframe
@@ -65,11 +69,16 @@
       </button>
 
       <nav class="navigation" id="navegacao" aria-label="Navegação principal">
-        <a href="#inicio">Início</a>
         <a href="#imoveis">Imóveis</a>
+        <a href="#bairros">Bairros</a>
         <a href="#sobre">Sobre</a>
         <a href="#contato">Contato</a>
-        <a class="nav-cta" href="#contato">Fale comigo <span aria-hidden="true">↗</span></a>
+        <a
+          class="nav-cta whatsapp-link"
+          href="#contato"
+          data-analytics-position="header"
+          data-message="Olá, Bira! Vim pelo seu site e gostaria de conversar sobre imóveis."
+        >WhatsApp <span aria-hidden="true">↗</span></a>
       </nav>
     </header>
 
@@ -77,40 +86,40 @@
       <section class="hero" id="inicio" aria-labelledby="hero-title">
         <img
           class="hero-image"
-          src="assets/hero.png"
-          alt="Vista panorâmica da orla e da arquitetura de São Luís"
+          src="assets/new-hero.png"
+          alt="Rua de arquitetura histórica em São Luís"
           fetchpriority="high"
         />
         <div class="hero-shade"></div>
         <div class="hero-content page-width">
           <p class="eyebrow hero-eyebrow"><span></span> Imóveis em São Luís · Maranhão</p>
-          <h1 id="hero-title">Encontre o imóvel ideal para o seu <em>próximo capítulo.</em></h1>
+          <h1 id="hero-title">Imóveis de alto padrão em São Luís.</h1>
           <p class="hero-description">
-            Imóveis de médio e alto padrão, com atendimento personalizado para você encontrar o lugar certo.
+            Mais que imóveis, um novo jeito de viver São Luís. Atendimento próximo para encontrar um lugar que faça sentido para você.
           </p>
           <div class="hero-actions">
-            <a class="button button-light" href="#imoveis">Explorar imóveis <span aria-hidden="true">↘</span></a>
+            <a class="button button-light" href="#imoveis">Ver imóveis <span aria-hidden="true">↘</span></a>
             <a class="text-link light-link whatsapp-link" href="#contato" data-analytics-position="hero" data-message="Olá, Bira! Vim pelo seu site e gostaria de conversar sobre imóveis.">
-              Falar com Bira <span aria-hidden="true">↗</span>
+              Conversar com Bira <span aria-hidden="true">↗</span>
             </a>
           </div>
         </div>
-        <div class="hero-caption"><span>01</span> São Luís, do seu jeito</div>
+        <div class="hero-meta page-width" aria-label="Informações do consultor">
+          <span><strong>CRECI</strong> 6103</span>
+          <span>São Luís <i aria-hidden="true">·</i> MA</span>
+          <span>Atendimento personalizado</span>
+        </div>
         <a class="hero-scroll" href="#imoveis" aria-label="Rolar para imóveis em destaque"><span></span></a>
       </section>
-
-      <div class="tile-rule" aria-hidden="true">
-        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-      </div>
 
       <section class="properties section-pad" id="imoveis" aria-labelledby="properties-title">
         <div class="page-width">
           <div class="section-heading">
             <div>
-              <p class="eyebrow"><span></span> Seleção especial</p>
-              <h2 id="properties-title">Imóveis em <em>destaque</em></h2>
+              <p class="eyebrow"><span></span> Seleção</p>
+              <h2 id="properties-title">Imóveis em destaque</h2>
             </div>
-            <p class="section-intro">Conheça algumas oportunidades selecionadas para você.</p>
+            <p class="section-intro">Uma seleção de oportunidades publicadas, apresentada com cuidado em cada detalhe.</p>
           </div>
 
           <div class="property-carousel">
@@ -127,36 +136,50 @@
             <button class="carousel-button" type="button" data-page-step="1" aria-label="Próxima página">→</button>
           </nav>
           <p class="disclaimer">
-            <span aria-hidden="true">✳</span> Consulte disponibilidade e condições diretamente com o consultor.
+            Consulte disponibilidade e condições diretamente com o consultor.
           </p>
+        </div>
+      </section>
+
+      <section class="city-note" id="bairros" aria-labelledby="city-title">
+        <div class="city-note-image" role="img" aria-label="Casario histórico e orla de São Luís, Maranhão"></div>
+        <div class="city-note-copy">
+          <p class="eyebrow eyebrow-light"><span></span> Maranhão · Brasil</p>
+          <h2 id="city-title">São Luís, em cada detalhe.</h2>
+          <p>Uma cidade de arquitetura, mar e histórias. Encontre oportunidades para viver São Luís no seu ritmo.</p>
+          <a class="text-link light-link" href="#imoveis">Conheça a seleção <span aria-hidden="true">↘</span></a>
         </div>
       </section>
 
       <section class="about section-pad" id="sobre" aria-labelledby="about-title">
         <div class="about-layout page-width">
-          <div class="portrait-wrap">
-            <div class="portrait-tile" aria-hidden="true"></div>
-            <img
-              class="portrait"
-              src="assets/bira-lopes2.png"
-              alt="Bira Lopes, consultor imobiliário"
-              loading="lazy"
-            />
-            <span class="portrait-caption">São Luís · Maranhão</span>
-          </div>
           <div class="about-copy">
-            <p class="eyebrow"><span></span> O consultor</p>
-            <h2 id="about-title">Muito prazer,<br />sou Bira <em>Lopes.</em></h2>
-            <p>
-              Atuo com imóveis de médio e alto padrão, oferecendo atendimento personalizado para quem deseja comprar ou alugar um imóvel.
-            </p>
-            <p>
-              Meu objetivo é ajudar você a encontrar uma oportunidade alinhada às suas necessidades, com atenção aos detalhes e acompanhamento durante sua jornada imobiliária.
-            </p>
-            <p class="about-signature">Bira Lopes <span>·</span> Consultor Imobiliário <span>·</span> CRECI 6103</p>
-            <a class="button button-dark whatsapp-link" href="#contato" data-analytics-position="about" data-message="Olá, Bira! Gostaria de conversar sobre imóveis em São Luís.">
-              Entre em contato <span aria-hidden="true">↗</span>
-            </a>
+            <div class="about-intro">
+              <p class="eyebrow eyebrow-light"><span></span> O consultor</p>
+              <h2 id="about-title"><span class="about-desktop-copy">Imóveis com um olhar próximo de São Luís.</span><span class="about-mobile-copy">Muito prazer, sou Bira Lopes.</span></h2>
+            </div>
+            <div class="about-details">
+              <p class="about-desktop-copy">
+                Atuo com imóveis de médio e alto padrão, oferecendo atendimento personalizado para quem deseja comprar ou alugar um imóvel.
+              </p>
+              <p class="about-desktop-copy">
+                Meu objetivo é ajudar você a encontrar uma oportunidade alinhada às suas necessidades, com atenção aos detalhes e acompanhamento durante sua jornada imobiliária.
+              </p>
+              <p class="about-mobile-copy">
+                Ajudo pessoas a encontrarem o imóvel certo em São Luís, com atendimento próximo e cuidado em cada etapa.
+              </p>
+              <ul class="about-mobile-metrics" aria-label="Informações profissionais a confirmar">
+                <li><strong>—</strong><span>Famílias atendidas · a confirmar</span></li>
+                <li><strong>—</strong><span>Negócios realizados · a confirmar</span></li>
+                <li><strong>—</strong><span>Anos de experiência · a confirmar</span></li>
+              </ul>
+              <p class="about-signature">Bira Lopes <span>·</span> Consultor Imobiliário <span>·</span> CRECI 6103</p>
+              <a class="button button-light whatsapp-link" href="#contato" data-analytics-position="about" data-message="Olá, Bira! Gostaria de conversar sobre imóveis em São Luís.">
+                <span class="about-cta-desktop">Fale comigo</span>
+                <span class="about-cta-mobile">Conversar no WhatsApp</span>
+                <span aria-hidden="true">↗</span>
+              </a>
+            </div>
           </div>
         </div>
       </section>
@@ -165,22 +188,22 @@
         <div class="page-width">
           <div class="approach-heading">
             <p class="eyebrow eyebrow-light"><span></span> Como posso ajudar</p>
-            <h2 id="approach-title">Um atendimento pensado<br />em cada <em>detalhe.</em></h2>
+            <h2 id="approach-title">Um atendimento pensado<br />em cada detalhe.</h2>
           </div>
           <div class="approach-grid">
             <article class="approach-item">
               <span class="approach-number">01</span>
-              <h3>Seleção de oportunidades</h3>
+              <h3>Entender o que você procura</h3>
               <p>Imóveis apresentados de acordo com suas necessidades e objetivos.</p>
             </article>
             <article class="approach-item">
               <span class="approach-number">02</span>
-              <h3>Atendimento personalizado</h3>
+              <h3>Conhecer boas oportunidades</h3>
               <p>Acompanhamento próximo durante sua busca pelo imóvel ideal.</p>
             </article>
             <article class="approach-item">
               <span class="approach-number">03</span>
-              <h3>Conhecimento da região</h3>
+              <h3>Seguir com tranquilidade</h3>
               <p>Uma apresentação de oportunidades em São Luís e região.</p>
             </article>
           </div>
@@ -189,13 +212,37 @@
 
       <section class="contact section-pad" id="contato" aria-labelledby="contact-title">
         <div class="contact-inner page-width">
-          <div class="contact-tile" aria-hidden="true"></div>
-          <p class="eyebrow"><span></span> Seu próximo capítulo começa aqui</p>
-          <h2 id="contact-title">Vamos conversar sobre<br />o seu <em>próximo imóvel?</em></h2>
-          <p class="contact-description">
-            Entre em contato para conhecer as oportunidades e conversar sobre o que você procura.
-          </p>
-          <form class="lead-form" id="lead-form">
+          <div class="contact-card">
+            <p class="eyebrow eyebrow-light"><span></span> Contato direto</p>
+            <h2 id="contact-title">Fale com Bira.</h2>
+            <p class="contact-description">Um atendimento próximo para encontrar um imóvel que combine com o que você procura.</p>
+            <div class="contact-channels" aria-label="Canais de contato">
+              <a class="contact-channel whatsapp-link" href="#contato" data-analytics-position="contact" data-message="Olá, Bira! Gostaria de conversar sobre o meu próximo imóvel.">
+                <span class="contact-channel-icon" aria-hidden="true">W</span>
+                <span class="contact-channel-copy"><span>WhatsApp</span><strong>+55 (98) 8865-9130</strong></span>
+                <span class="contact-channel-arrow" aria-hidden="true">↗</span>
+              </a>
+              <a class="contact-channel" href="tel:+559888659130">
+                <span class="contact-channel-icon" aria-hidden="true">☎</span>
+                <span class="contact-channel-copy"><span>Telefone</span><strong>+55 (98) 8865-9130</strong></span>
+                <span class="contact-channel-arrow" aria-hidden="true">↗</span>
+              </a>
+              <a class="contact-channel" href="https://www.instagram.com/biralopesimoveis/" target="_blank" rel="noopener noreferrer">
+                <span class="contact-channel-icon" aria-hidden="true">◎</span>
+                <span class="contact-channel-copy"><span>Instagram</span><strong>@biralopesimoveis</strong></span>
+                <span class="contact-channel-arrow" aria-hidden="true">↗</span>
+              </a>
+              <div class="contact-channel contact-channel-unavailable">
+                <span class="contact-channel-icon" aria-hidden="true">◷</span>
+                <span class="contact-channel-copy"><span>Atendimento</span><strong>Personalizado</strong></span>
+              </div>
+            </div>
+            <p class="contact-creci">CRECI 6103 <span>·</span> São Luís, Maranhão</p>
+          </div>
+          <form class="lead-form" id="lead-form" aria-labelledby="lead-form-title">
+            <p class="eyebrow"><span></span> Conte um pouco</p>
+            <h2 id="lead-form-title">Vamos conversar?</h2>
+            <p class="contact-form-intro">Preencha seus dados e conte como posso ajudar.</p>
             <input name="empreendimento_id" type="hidden" />
             <div class="lead-form-grid">
               <label>Nome
@@ -207,13 +254,14 @@
               <label>E-mail <span>(opcional)</span>
                 <input name="email" type="email" autocomplete="email" maxlength="254" />
               </label>
-              <label>Tenho interesse em
-                <select name="tipo_interesse" required>
-                  <option value="comprar">Comprar um imóvel</option>
-                  <option value="investir">Investir</option>
-                  <option value="empreendimento">Um empreendimento específico</option>
-                </select>
-              </label>
+              <fieldset class="interest-fieldset">
+                <legend>Objetivo</legend>
+                <div class="interest-options">
+                  <label class="interest-chip"><input type="radio" name="tipo_interesse" value="comprar" required checked /><span>Comprar</span></label>
+                  <label class="interest-chip"><input type="radio" name="tipo_interesse" value="investir" required /><span>Investir</span></label>
+                  <label class="interest-chip"><input type="radio" name="tipo_interesse" value="empreendimento" required /><span>Empreendimento</span></label>
+                </div>
+              </fieldset>
             </div>
             <label>Mensagem
               <textarea name="mensagem" rows="4" maxlength="2000" required></textarea>
@@ -228,10 +276,6 @@
             </button>
             <p class="lead-form-note" id="lead-form-note">O envio seguro do formulário precisa ser configurado pelo administrador do site. Você também pode entrar em contato pelo WhatsApp.</p>
           </form>
-          <button class="button button-dark whatsapp-link" type="button" data-analytics-position="contact" data-message="Olá, Bira! Gostaria de conversar sobre o meu próximo imóvel.">
-            Chamar no WhatsApp <span aria-hidden="true">↗</span>
-          </button>
-          <p class="contact-note">WhatsApp: +55 (98) 8865-9130</p>
         </div>
       </section>
     </main>
@@ -246,24 +290,52 @@
               <span class="wordmark-role">Consultor Imobiliário</span>
             </span>
           </a>
-          <p>CRECI 6103<br />São Luís, Maranhão</p>
+          <p class="footer-regulatory">CRECI 6103</p>
+          <p class="footer-location">São Luís · Maranhão</p>
+          <p class="footer-description">Consultoria imobiliária com atendimento personalizado em São Luís.</p>
+        </div>
+        <div class="footer-contacts">
+          <p class="footer-label">Contato</p>
+          <a class="footer-detail whatsapp-link" href="#contato" data-analytics-position="footer" data-message="Olá, Bira! Vim pelo seu site e gostaria de conversar.">
+            <span>WhatsApp</span><strong>+55 (98) 8865-9130</strong>
+          </a>
+          <a class="footer-detail" href="tel:+559888659130"><span>Telefone</span><strong>+55 (98) 8865-9130</strong></a>
+          <p class="footer-detail"><span>E-mail</span><strong>Não informado</strong></p>
+          <p class="footer-detail"><span>Horário de atendimento</span><strong>Não informado</strong></p>
         </div>
         <nav class="footer-nav" aria-label="Navegação do rodapé">
+          <p class="footer-label">Explore</p>
           <a href="#inicio">Início</a>
           <a href="#imoveis">Imóveis</a>
+          <a href="#bairros">Bairros</a>
           <a href="#sobre">Sobre</a>
           <a href="#contato">Contato</a>
         </nav>
-        <a class="footer-contact whatsapp-link" href="#contato" data-analytics-position="footer" data-message="Olá, Bira! Vim pelo seu site e gostaria de conversar.">
-          Fale comigo <span aria-hidden="true">↗</span>
-        </a>
-        <div class="footer-tile" aria-hidden="true"></div>
+        <div class="footer-socials">
+          <p class="footer-label">Redes sociais</p>
+          <a class="footer-social" href="https://www.instagram.com/biralopesimoveis/" target="_blank" rel="noopener noreferrer" aria-label="Instagram @biralopesimoveis">
+            Instagram <strong>@biralopesimoveis</strong>
+          </a>
+          <a class="footer-social whatsapp-link" href="#contato" data-analytics-position="footer" data-message="Olá, Bira! Vim pelo seu site e gostaria de conversar.">
+            WhatsApp <span aria-hidden="true">↗</span>
+          </a>
+        </div>
       </div>
       <div class="footer-bottom page-width">
-        <span>© Bira Lopes · Imóveis e valores meramente ilustrativos.</span>
-        <a href="#topo">Voltar ao topo ↑</a>
+        <span>© <time id="footer-year" datetime="2026">2026</time> Bira Lopes <span>·</span> CRECI 6103</span>
+        <span>Disponibilidade e valores sujeitos à confirmação.</span>
+        <a href="#topo">Voltar ao topo <span aria-hidden="true">↑</span></a>
       </div>
     </footer>
 
+    <nav class="mobile-action-bar" aria-label="Ações rápidas">
+      <a href="#imoveis">Ver imóveis <span aria-hidden="true">↗</span></a>
+      <a
+        class="whatsapp-link"
+        href="#contato"
+        data-analytics-position="mobile_bar"
+        data-message="Olá, Bira! Gostaria de conversar sobre imóveis em São Luís."
+      >WhatsApp <span aria-hidden="true">↗</span></a>
+    </nav>
   </body>
 </html>

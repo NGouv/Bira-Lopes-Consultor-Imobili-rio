@@ -514,19 +514,42 @@ window.addEventListener(
 );
 
 if (menuToggle && navigation) {
+  const closeNavigation = () => {
+    menuToggle.setAttribute("aria-expanded", "false");
+    menuToggle.setAttribute("aria-label", "Abrir menu");
+    navigation.classList.remove("is-open");
+  };
+
   menuToggle.addEventListener("click", () => {
     const isExpanded = menuToggle.getAttribute("aria-expanded") === "true";
-    menuToggle.setAttribute("aria-expanded", String(!isExpanded));
-    menuToggle.setAttribute("aria-label", isExpanded ? "Abrir menu" : "Fechar menu");
-    navigation.classList.toggle("is-open", !isExpanded);
+    if (isExpanded) {
+      closeNavigation();
+      return;
+    }
+    menuToggle.setAttribute("aria-expanded", "true");
+    menuToggle.setAttribute("aria-label", "Fechar menu");
+    navigation.classList.add("is-open");
   });
 
   navigation.addEventListener("click", (event) => {
-    if (event.target.closest("a")) {
-      menuToggle.setAttribute("aria-expanded", "false");
-      menuToggle.setAttribute("aria-label", "Abrir menu");
-      navigation.classList.remove("is-open");
+    if (event.target instanceof Element && event.target.closest("a")) closeNavigation();
+  });
+
+  document.addEventListener("click", (event) => {
+    if (
+      menuToggle.getAttribute("aria-expanded") === "true" &&
+      event.target instanceof Node &&
+      !menuToggle.contains(event.target) &&
+      !navigation.contains(event.target)
+    ) {
+      closeNavigation();
     }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape" || menuToggle.getAttribute("aria-expanded") !== "true") return;
+    closeNavigation();
+    menuToggle.focus();
   });
 }
 
@@ -583,3 +606,10 @@ document.addEventListener("click", (event) => {
     "noopener,noreferrer",
   );
 });
+
+const footerYear = document.querySelector("#footer-year");
+if (footerYear) {
+  const currentYear = new Date().getFullYear();
+  footerYear.textContent = String(currentYear);
+  footerYear.dateTime = String(currentYear);
+}
