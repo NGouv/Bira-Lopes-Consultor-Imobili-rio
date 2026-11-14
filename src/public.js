@@ -471,6 +471,12 @@ function initializeLeadForm() {
     status.textContent = "Enviando sua mensagem...";
     try {
       await submitLead(lead, turnstileToken, values.get("website"));
+      try {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({ event: "generate_lead", form_id: "lead-form" });
+      } catch (error) {
+        console.error("Falha ao registrar conversão de lead:", error);
+      }
       form.reset();
       status.textContent = "Mensagem enviada. Obrigado pelo contato!";
       if (window.turnstile && turnstileWidgetId != null) {
