@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  getInstagramReelEmbedUrl,
   getYouTubeEmbedUrl,
   MAX_IMAGE_SIZE_BYTES,
   validateImageFile,
@@ -76,6 +77,25 @@ test("accepts only safe YouTube video URLs and returns privacy-enhanced embed UR
   );
 });
 
+test("accepts only safe Instagram Reel URLs and returns an embed URL", () => {
+  assert.equal(
+    getInstagramReelEmbedUrl("https://www.instagram.com/reel/ABC_123/?igsh=share"),
+    "https://www.instagram.com/reel/ABC_123/embed/",
+  );
+  assert.throws(
+    () => getInstagramReelEmbedUrl("https://instagram.com.evil.example/reel/ABC_123/"),
+    ValidationError,
+  );
+  assert.throws(
+    () => getInstagramReelEmbedUrl("http://www.instagram.com/reel/ABC_123/"),
+    ValidationError,
+  );
+  assert.throws(
+    () => getInstagramReelEmbedUrl("https://www.instagram.com/p/ABC_123/"),
+    ValidationError,
+  );
+});
+
 test("accepts only URL-safe property slugs", () => {
   assert.equal(validatePropertySlug("apartamento-no-calhau"), "apartamento-no-calhau");
   assert.throws(() => validatePropertySlug("../admin"), ValidationError);
@@ -98,6 +118,7 @@ test("validates property data, normalizes YouTube URLs, and rejects invalid valu
     descricao_seo: "",
     video_url: "https://youtu.be/abcdefghijk?feature=share",
     video_ativo: true,
+    reel_url: "https://www.instagram.com/reel/ABC_123/?igsh=share",
   };
   for (const finalidade of ["venda", "aluguel", "lancamento"]) {
     const property = validateProperty({ ...validProperty, finalidade });
@@ -108,6 +129,8 @@ test("validates property data, normalizes YouTube URLs, and rejects invalid valu
   assert.equal(property.metragem, 120.5);
   assert.equal(property.quartos, 3);
   assert.equal(property.video_url, "https://www.youtube.com/embed/abcdefghijk");
+  assert.equal(property.reel_url, "https://www.instagram.com/reel/ABC_123/");
+  assert.equal(validateProperty({ ...validProperty, finalidade: "venda", reel_url: "" }).reel_url, null);
 
   assert.throws(
     () => validateProperty({

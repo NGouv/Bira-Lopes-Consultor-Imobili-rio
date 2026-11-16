@@ -348,7 +348,7 @@ async function openPropertyEditor(id = null) {
         "titulo", "slug", "descricao", "tipo", "finalidade", "status",
         "endereco", "bairro", "cidade", "estado", "metragem", "quartos",
         "banheiros", "vagas", "preco", "destaque", "descricao_seo",
-        "video_url", "video_ativo",
+        "video_url", "video_ativo", "reel_url",
       ]) {
         setFormValue(name, property[name]);
       }
@@ -603,6 +603,7 @@ propertyForm.addEventListener("submit", async (event) => {
     descricao_seo: values.get("descricao_seo"),
     video_url: values.get("video_url"),
     video_ativo: propertyForm.elements.namedItem("video_ativo").checked,
+    reel_url: values.get("reel_url"),
   };
   const id = values.get("id") || null;
 

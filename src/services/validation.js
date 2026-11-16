@@ -249,6 +249,13 @@ export function validateProperty(input) {
     throw new ValidationError("Informe um vídeo antes de ativar sua exibição.");
   }
   result.video_ativo = input.video_ativo;
+  result.reel_url = optionalText(input.reel_url, "Link do Reel do Instagram", 2048);
+  if (result.reel_url) {
+    result.reel_url = getInstagramReelEmbedUrl(result.reel_url).replace(
+      /embed\/$/,
+      "",
+    );
+  }
 
   return result;
 }
@@ -286,4 +293,28 @@ export function getYouTubeEmbedUrl(value) {
   }
 
   return `https://www.youtube-nocookie.com/embed/${videoId}`;
+}
+
+export function getInstagramReelEmbedUrl(value) {
+  if (typeof value !== "string" || value.length > 2048) {
+    throw new ValidationError("Informe uma URL válida de Reel do Instagram.");
+  }
+
+  let url;
+  try {
+    url = new URL(value);
+  } catch {
+    throw new ValidationError("Informe uma URL válida de Reel do Instagram.");
+  }
+
+  if (url.protocol !== "https:" || !["instagram.com", "www.instagram.com"].includes(url.hostname.toLowerCase())) {
+    throw new ValidationError("A URL do Reel precisa ser segura e pertencer ao Instagram.");
+  }
+
+  const shortcode = url.pathname.match(/^\/reel\/([A-Za-z0-9_-]+)\/?$/)?.[1];
+  if (!shortcode) {
+    throw new ValidationError("A URL não corresponde a um Reel válido do Instagram.");
+  }
+
+  return `https://www.instagram.com/reel/${shortcode}/embed/`;
 }

@@ -22,6 +22,7 @@ const PROPERTY_COLUMNS = [
   "descricao_seo",
   "video_url",
   "video_ativo",
+  "reel_url",
   "created_at",
 ].join(",");
 

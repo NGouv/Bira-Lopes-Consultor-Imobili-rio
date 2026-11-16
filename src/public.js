@@ -1,10 +1,13 @@
 import { getPublishedProperties, getPublishedPropertyBySlug } from "./services/propertyService.js";
 import { createImageSignedUrls } from "./services/storageService.js";
 import { submitLead } from "./services/leadService.js";
-import { getYouTubeEmbedUrl } from "./services/validation.js";
+import {
+  getInstagramReelEmbedUrl,
+  getYouTubeEmbedUrl,
+} from "./services/validation.js";
 
 const WHATSAPP_PHONE = "559888659130";
-const PAGE_SIZE = 6;
+const PAGE_SIZE = 9;
 const propertyTrack = document.querySelector("#property-track");
 const detailContent = document.querySelector("#property-detail-content");
 const menuToggle = document.querySelector(".menu-toggle");
@@ -40,6 +43,7 @@ function formatPrice(value, purpose) {
 
 function featureLabel(property) {
   return [
+    property.tipo,
     property.metragem != null && `${Number(property.metragem).toLocaleString("pt-BR")} m²`,
     property.quartos != null && `${property.quartos} quartos`,
     property.banheiros != null && `${property.banheiros} banheiros`,
@@ -52,16 +56,6 @@ function setCatalogStatus(message, state = "") {
   if (!status) return;
   status.textContent = message;
   status.dataset.state = state;
-}
-
-function updateCarouselControls() {
-  if (!propertyTrack) return;
-  const previous = document.querySelector('[data-carousel-step="-1"]');
-  const next = document.querySelector('[data-carousel-step="1"]');
-  if (!previous || !next) return;
-  previous.disabled = propertyTrack.scrollLeft <= 1;
-  next.disabled =
-    propertyTrack.scrollLeft + propertyTrack.clientWidth >= propertyTrack.scrollWidth - 1;
 }
 
 function propertyCard(property, coverUrl) {
@@ -80,7 +74,10 @@ function propertyCard(property, coverUrl) {
   } else {
     photoWrap.append(node("span", "property-photo-placeholder", "Imagem não cadastrada"));
   }
-  photoWrap.append(node("span", "property-tag", property.finalidade));
+  const tags = node("div", "property-tags");
+  tags.append(node("span", "property-tag", property.finalidade));
+  if (property.destaque) tags.append(node("span", "property-tag property-tag-featured", "Destaque"));
+  photoWrap.append(tags);
 
   const copy = node("div", "property-copy");
   copy.append(node("h3", "", property.titulo));
@@ -133,8 +130,6 @@ async function loadCatalog(page = catalogPage) {
         ),
       );
     }
-    requestAnimationFrame(updateCarouselControls);
-
     if (result.data.length === 0) {
       setCatalogStatus(
         page > 1
@@ -322,26 +317,43 @@ function renderPropertyDetail() {
   copy.append(price, contact, formContact);
   layout.append(gallery, copy);
 
-  if (activeProperty.video_ativo && activeProperty.video_url) {
-    try {
-      const video = node("iframe", "property-video");
-      video.src = getYouTubeEmbedUrl(activeProperty.video_url);
-      video.title = `Vídeo: ${activeProperty.titulo}`;
-      video.loading = "lazy";
-      video.referrerPolicy = "strict-origin-when-cross-origin";
-      video.allow =
-        "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
-      video.allowFullscreen = true;
-      const section = node("section", "property-video-section");
-      section.append(node("h2", "", "Conheça o empreendimento"), video);
-      detailContent.replaceChildren(layout, section);
-      return;
-    } catch (error) {
-      console.error("URL de vídeo inválida no cadastro:", error);
+  const mediaSection = node("section", "property-video-section");
+  if (
+    (activeProperty.video_ativo && activeProperty.video_url) ||
+    activeProperty.reel_url
+  ) {
+    mediaSection.append(node("h2", "", "Conheça o empreendimento"));
+    if (activeProperty.video_ativo && activeProperty.video_url) {
+      try {
+        const video = node("iframe", "property-video");
+        video.src = getYouTubeEmbedUrl(activeProperty.video_url);
+        video.title = `Vídeo: ${activeProperty.titulo}`;
+        video.loading = "lazy";
+        video.referrerPolicy = "strict-origin-when-cross-origin";
+        video.allow =
+          "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+        video.allowFullscreen = true;
+        mediaSection.append(video);
+      } catch (error) {
+        console.error("URL de vídeo inválida no cadastro:", error);
+      }
+    }
+    if (activeProperty.reel_url) {
+      try {
+        const reel = node("iframe", "property-video property-video-instagram");
+        reel.src = getInstagramReelEmbedUrl(activeProperty.reel_url);
+        reel.title = `Reel do Instagram: ${activeProperty.titulo}`;
+        reel.loading = "lazy";
+        reel.referrerPolicy = "strict-origin-when-cross-origin";
+        mediaSection.append(reel);
+      } catch (error) {
+        console.error("URL de Reel inválida no cadastro:", error);
+      }
     }
   }
 
   detailContent.replaceChildren(layout);
+  if (mediaSection.childElementCount > 1) detailContent.append(mediaSection);
 }
 
 function changeGallery(step) {
@@ -498,8 +510,6 @@ function initializeLeadForm() {
 }
 
 if (propertyTrack) loadCatalog();
-propertyTrack?.addEventListener("scroll", updateCarouselControls, { passive: true });
-window.addEventListener("resize", updateCarouselControls);
 if (detailContent) showPropertyDetail();
 rememberAttribution();
 initializeLeadForm();
@@ -563,16 +573,6 @@ document.addEventListener("click", (event) => {
     return;
   }
 
-  const carouselButton = event.target.closest("[data-carousel-step]");
-  if (carouselButton && propertyTrack) {
-    const card = propertyTrack.querySelector(".property-card");
-    if (!card) return;
-    const gap = parseFloat(getComputedStyle(propertyTrack).columnGap) || 0;
-    propertyTrack.scrollBy({
-      left: Number(carouselButton.dataset.carouselStep) * (card.getBoundingClientRect().width + gap),
-      behavior: "smooth",
-    });
-  }
 });
 
 document.addEventListener("click", (event) => {

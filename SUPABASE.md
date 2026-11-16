@@ -20,7 +20,7 @@
 | `leads` | Só `admin` consulta e altera a situação; visitantes não têm `INSERT` direto. A Edge Function valida e insere no servidor. |
 | `lead_rate_limits` | Sem acesso público ou autenticado. A função de limite só pode ser executada por `service_role`. Guarda HMAC do IP em janelas de 15 minutos, não o IP em texto claro. |
 
-O catálogo público usa paginação de seis empreendimentos por página. O painel usa páginas de 25. Conteúdo não confiável é renderizado em nós de texto; URLs de vídeo são validadas e convertidas para `youtube-nocookie.com`.
+O catálogo público usa paginação de nove empreendimentos por página. O painel usa páginas de 25. Conteúdo não confiável é renderizado em nós de texto; URLs do YouTube e de Reels do Instagram são validadas antes de serem incorporadas. A migration `20261116000100_add_instagram_reel_url.sql` adiciona a coluna opcional `reel_url` sem alterar os vídeos existentes e deve ser aplicada ao projeto Supabase antes de publicar o frontend atualizado.
 
 Despublicar ou arquivar preserva o registro. Exclusão física só está disponível no painel após confirmação e tenta remover imagens do Storage antes de excluir o empreendimento. Se a remoção do Storage falhar, o registro é mantido e o painel exibe o erro.
 

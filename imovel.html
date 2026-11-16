@@ -20,7 +20,7 @@
     </script>
     <!-- End Google Tag Manager -->
     <title>Imóvel | Bira Lopes</title>
-    <link rel="icon" href="assets/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -31,6 +31,7 @@
     />
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="home-visual.css" />
+    <link rel="stylesheet" href="site-refinements.css" />
     <script type="module" src="script.js"></script>
   </head>
   <body class="property-detail-page">
@@ -53,7 +54,27 @@
           <span class="wordmark-role">Consultor Imobiliário</span>
         </span>
       </a>
-      <a class="detail-back" href="index.html#imoveis">← Voltar aos imóveis</a>
+      <button
+        class="menu-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="navegacao"
+        aria-label="Abrir menu"
+      >
+        <span></span><span></span>
+      </button>
+      <nav class="navigation" id="navegacao" aria-label="Navegação principal">
+        <a href="index.html#imoveis">Imóveis</a>
+        <a href="index.html#bairros">Bairros</a>
+        <a href="index.html#sobre">Sobre</a>
+        <a href="index.html#contato">Contato</a>
+        <a
+          class="nav-cta whatsapp-link"
+          href="https://wa.me/559888659130"
+          data-analytics-position="detail_header"
+          data-message="Olá, Bira! Vim pelo seu site e gostaria de conversar sobre imóveis."
+        >WhatsApp <span aria-hidden="true">↗</span></a>
+      </nav>
     </header>
     <main id="property-detail" class="property-detail page-width" tabindex="-1">
       <div id="property-detail-content"></div>

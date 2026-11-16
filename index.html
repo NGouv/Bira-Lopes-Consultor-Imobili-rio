@@ -23,7 +23,7 @@
     </script>
     <!-- End Google Tag Manager -->
     <title>Bira Lopes | São Luís, do seu jeito</title>
-    <link rel="icon" href="assets/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -34,6 +34,7 @@
     />
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="home-visual.css" />
+    <link rel="stylesheet" href="site-refinements.css" />
     <script type="module" src="script.js"></script>
   </head>
   <body class="home-page">
@@ -121,19 +122,14 @@
             </div>
             <p class="section-intro">Uma seleção de oportunidades publicadas, apresentada com cuidado em cada detalhe.</p>
           </div>
-
           <div class="property-carousel">
-            <div class="property-carousel-controls" aria-label="Controles do carrossel de imóveis">
-              <button class="carousel-button" type="button" data-carousel-step="-1" aria-label="Imóveis anteriores" disabled>←</button>
-              <button class="carousel-button" type="button" data-carousel-step="1" aria-label="Próximos imóveis">→</button>
-            </div>
             <div class="property-track" id="property-track" role="region" aria-label="Imóveis em destaque" tabindex="0"></div>
           </div>
           <p class="catalog-status" id="catalog-status" role="status" aria-live="polite"></p>
           <nav class="catalog-pagination" id="catalog-pagination" aria-label="Paginação dos imóveis" hidden>
-            <button class="carousel-button" type="button" data-page-step="-1" aria-label="Página anterior" disabled>←</button>
-            <span id="catalog-page-label"></span>
-            <button class="carousel-button" type="button" data-page-step="1" aria-label="Próxima página">→</button>
+            <button class="catalog-page-button" type="button" data-page-step="-1" aria-label="Página anterior" disabled>Anterior</button>
+            <span id="catalog-page-label" aria-live="polite" aria-atomic="true"></span>
+            <button class="catalog-page-button" type="button" data-page-step="1" aria-label="Próxima página">Próximo</button>
           </nav>
           <p class="disclaimer">
             Consulte disponibilidade e condições diretamente com o consultor.
@@ -232,16 +228,19 @@
                 <span class="contact-channel-copy"><span>Instagram</span><strong>@biralopesimoveis</strong></span>
                 <span class="contact-channel-arrow" aria-hidden="true">↗</span>
               </a>
-              <div class="contact-channel contact-channel-unavailable">
-                <span class="contact-channel-icon" aria-hidden="true">◷</span>
-                <span class="contact-channel-copy"><span>Atendimento</span><strong>Personalizado</strong></span>
-              </div>
+              <a class="contact-channel" href="mailto:biralopes.imoveis@gmail.com">
+                <span class="contact-channel-icon" aria-hidden="true">@</span>
+                <span class="contact-channel-copy"><span>E-mail</span><strong>biralopes.imoveis@gmail.com</strong></span>
+                <span class="contact-channel-arrow" aria-hidden="true">↗</span>
+              </a>
             </div>
             <p class="contact-creci">CRECI 6103 <span>·</span> São Luís, Maranhão</p>
           </div>
           <form class="lead-form" id="lead-form" aria-labelledby="lead-form-title">
-            <p class="eyebrow"><span></span> Conte um pouco</p>
-            <h2 id="lead-form-title">Vamos conversar?</h2>
+            <div class="lead-form-heading">
+              <p class="eyebrow"><span></span> Conte um pouco</p>
+              <h2 id="lead-form-title">Vamos conversar?</h2>
+            </div>
             <p class="contact-form-intro">Preencha seus dados e conte como posso ajudar.</p>
             <input name="empreendimento_id" type="hidden" />
             <div class="lead-form-grid">
@@ -300,8 +299,7 @@
             <span>WhatsApp</span><strong>+55 (98) 8865-9130</strong>
           </a>
           <a class="footer-detail" href="tel:+559888659130"><span>Telefone</span><strong>+55 (98) 8865-9130</strong></a>
-          <p class="footer-detail"><span>E-mail</span><strong>Não informado</strong></p>
-          <p class="footer-detail"><span>Horário de atendimento</span><strong>Não informado</strong></p>
+          <a class="footer-detail" href="mailto:biralopes.imoveis@gmail.com"><span>E-mail</span><strong>biralopes.imoveis@gmail.com</strong></a>
         </div>
         <nav class="footer-nav" aria-label="Navegação do rodapé">
           <p class="footer-label">Explore</p>
