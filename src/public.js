@@ -153,10 +153,17 @@ async function loadCatalog(page = catalogPage) {
     }
   } catch (error) {
     console.error("Falha ao carregar o catálogo:", error);
+
+    const message = error?.message || "Erro desconhecido ao consultar o catálogo.";
+    const isConfigIssue = /Supabase não configurado|VITE_SUPABASE_URL|VITE_SUPABASE_ANON_KEY/i.test(message);
+    const isProjectIssue = /PGRST205|Could not find the table|schema cache|not found/i.test(message);
+
     setCatalogStatus(
-      error.message.includes("Supabase não configurado")
-        ? "O catálogo ainda não está conectado ao Supabase."
-        : "Não foi possível carregar os empreendimentos. Tente novamente em instantes.",
+      isConfigIssue
+        ? "O catálogo está sem configuração do Supabase no ambiente atual. Verifique VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY no deploy."
+        : isProjectIssue
+          ? "Não foi possível acessar o projeto Supabase correto ou a tabela de imóveis não está disponível. Verifique a URL do projeto e o schema do banco."
+          : "Não foi possível carregar os empreendimentos. Tente novamente em instantes.",
       "error",
     );
     const retry = node("button", "button button-dark", "Tentar novamente");
@@ -236,13 +243,18 @@ async function showPropertyDetail() {
     renderPropertyDetail();
   } catch (error) {
     console.error("Falha ao carregar o empreendimento:", error);
+    const message = error?.message || "Erro desconhecido ao consultar o empreendimento.";
+    const isConfigIssue = /Supabase não configurado|VITE_SUPABASE_URL|VITE_SUPABASE_ANON_KEY/i.test(message);
+    const isProjectIssue = /PGRST205|Could not find the table|schema cache|not found/i.test(message);
     detailContent.replaceChildren(
       node(
         "p",
         "catalog-status",
-        error.message.includes("Supabase não configurado")
-          ? "Os detalhes deste empreendimento ainda não estão conectados ao Supabase."
-          : "Não foi possível carregar este empreendimento. Tente novamente em instantes.",
+        isConfigIssue
+          ? "Os detalhes deste empreendimento dependem do ambiente do Supabase. Verifique VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY antes do deploy."
+          : isProjectIssue
+            ? "O projeto Supabase conectado está inconsistente ou a tabela do catálogo não está disponível. Verifique o schema e a URL do projeto."
+            : "Não foi possível carregar este empreendimento. Tente novamente em instantes.",
       ),
     );
     const retry = node("button", "button button-dark", "Tentar novamente");
