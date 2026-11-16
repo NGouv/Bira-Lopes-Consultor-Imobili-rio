@@ -760,81 +760,6 @@
   gap: clamp(30px, 5vw, 68px);
 }
 
-.property-detail-page .detail-gallery {
-  display: flex;
-  min-width: 0;
-  flex-direction: column;
-  gap: 12px;
-  overflow: visible;
-  aspect-ratio: auto;
-  background: transparent;
-}
-
-.property-detail-page .detail-gallery-main {
-  position: relative;
-  overflow: hidden;
-  aspect-ratio: 1.38;
-  background: var(--areia);
-}
-
-.property-detail-page .detail-gallery-main > img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.property-detail-page .gallery-controls {
-  right: 14px;
-  bottom: 14px;
-  gap: 8px;
-  padding: 5px 7px;
-  border-radius: 2px;
-  background: rgb(15 42 48 / 72%);
-  text-shadow: none;
-}
-
-.property-detail-page .gallery-controls button {
-  width: 42px;
-  height: 42px;
-  border-color: rgb(244 240 232 / 58%);
-  background: var(--mare);
-}
-
-.property-detail-page .gallery-controls button:hover {
-  background: var(--mare-clara);
-}
-
-.property-detail-page .detail-thumbnails {
-  display: flex;
-  gap: 9px;
-  overflow-x: auto;
-  padding: 2px 1px 5px;
-  scrollbar-width: thin;
-}
-
-.property-detail-page .detail-thumbnail {
-  width: 82px;
-  height: 62px;
-  flex: 0 0 auto;
-  overflow: hidden;
-  padding: 0;
-  border: 1px solid transparent;
-  background: var(--areia);
-  cursor: pointer;
-  opacity: 0.72;
-}
-
-.property-detail-page .detail-thumbnail[aria-pressed="true"] {
-  border-color: var(--latao-escuro);
-  opacity: 1;
-}
-
-.property-detail-page .detail-thumbnail img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
 .property-detail-page .detail-copy {
   min-width: 0;
   padding-top: 4px;
@@ -1040,9 +965,6 @@
     margin-bottom: 22px;
   }
 
-  .property-detail-page .detail-gallery-main {
-    aspect-ratio: 1.35;
-  }
 }
 
 @media (max-width: 540px) {
@@ -1087,19 +1009,6 @@
 
   .property-detail-page .detail-heading h1 {
     font-size: clamp(38px, 10vw, 52px);
-  }
-
-  .property-detail-page .detail-gallery-main {
-    aspect-ratio: 1.12;
-  }
-
-  .property-detail-page .detail-thumbnails {
-    gap: 7px;
-  }
-
-  .property-detail-page .detail-thumbnail {
-    width: 70px;
-    height: 54px;
   }
 
   .property-detail-page .detail-features {

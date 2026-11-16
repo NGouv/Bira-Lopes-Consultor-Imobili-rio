@@ -1,6 +1,8 @@
 import { getPublishedProperties, getPublishedPropertyBySlug } from "./services/propertyService.js";
 import { createImageSignedUrls } from "./services/storageService.js";
 import { submitLead } from "./services/leadService.js";
+import { montarGaleria } from "./galeria-mosaico.js";
+import "./galeria-mosaico.css";
 import {
   getInstagramReelEmbedUrl,
   getYouTubeEmbedUrl,
@@ -13,7 +15,6 @@ const detailContent = document.querySelector("#property-detail-content");
 const menuToggle = document.querySelector(".menu-toggle");
 const navigation = document.querySelector("#navegacao");
 let activeProperty = null;
-let activeImageIndex = 0;
 let catalogPage = 1;
 let catalogCount = 0;
 let catalogLoading = false;
@@ -275,10 +276,6 @@ async function showPropertyDetail() {
       .sort((a, b) => a.ordem - b.ordem)
       .map((image) => ({ ...image, url: signedByPath.get(image.storage_path) }));
     activeProperty.gallery = galleryImages;
-    activeImageIndex = Math.max(
-      0,
-      galleryImages.findIndex((image) => image.is_cover),
-    );
 
     document.title = `${activeProperty.titulo} | Bira Lopes`;
     const description = document.querySelector('meta[name="description"]');
@@ -351,55 +348,12 @@ function renderPropertyDetail() {
     node("p", "property-location", locationLabel(activeProperty) || "São Luís, MA"),
   );
 
-  const layout = node("div", "detail-layout");
-  const gallery = node("div", "detail-gallery");
-  const images = activeProperty.gallery;
-  if (images.length) {
-    const image = node("img");
-    image.alt = `${activeProperty.titulo} — imagem ${activeImageIndex + 1}`;
-    image.loading = "eager";
-    image.src = images[activeImageIndex].url;
-    const mainImage = node("div", "detail-gallery-main");
-    mainImage.append(image);
-    if (images.length > 1) {
-      const controls = node("div", "gallery-controls");
-      const previous = node("button", "", "←");
-      previous.type = "button";
-      previous.setAttribute("aria-label", "Imagem anterior");
-      previous.addEventListener("click", () => changeGallery(-1));
-      const count = node("span", "gallery-count", `${activeImageIndex + 1} / ${images.length}`);
-      count.id = "gallery-count";
-      const next = node("button", "", "→");
-      next.type = "button";
-      next.setAttribute("aria-label", "Próxima imagem");
-      next.addEventListener("click", () => changeGallery(1));
-      controls.append(previous, count, next);
-      mainImage.append(controls);
-    }
-    gallery.append(mainImage);
-    if (images.length > 1) {
-      const thumbnails = node("div", "detail-thumbnails");
-      thumbnails.setAttribute("aria-label", "Miniaturas da galeria");
-      images.forEach((galleryImage, index) => {
-        const thumbnail = node("button", "detail-thumbnail");
-        thumbnail.type = "button";
-        thumbnail.setAttribute("aria-label", `Exibir imagem ${index + 1} de ${images.length}`);
-        thumbnail.setAttribute("aria-pressed", String(index === activeImageIndex));
-        const thumbnailImage = node("img");
-        thumbnailImage.src = galleryImage.url;
-        thumbnailImage.alt = "";
-        thumbnailImage.loading = "lazy";
-        thumbnail.append(thumbnailImage);
-        thumbnail.addEventListener("click", () => setGalleryImage(index));
-        thumbnails.append(thumbnail);
-      });
-      gallery.append(thumbnails);
-    }
-  } else {
-    gallery.classList.add("detail-gallery-empty");
-    gallery.append(node("span", "property-photo-placeholder", "Imagens ainda não cadastradas"));
-  }
+  const fotos = [...(activeProperty.gallery ?? [])].sort(
+    (a, b) => Number(b.is_cover) - Number(a.is_cover),
+  );
+  const galeria = montarGaleria(fotos, activeProperty.titulo);
 
+  const layout = node("div", "detail-layout");
   const copy = node("div", "detail-copy");
   appendDetailFeatures(copy, activeProperty);
   const price = node("div", "detail-price");
@@ -427,7 +381,6 @@ function renderPropertyDetail() {
   const formContact = node("a", "property-form-contact", "Prefiro enviar uma mensagem pelo formulário");
   formContact.href = `index.html?empreendimento=${encodeURIComponent(activeProperty.id)}#contato`;
   copy.append(price, contact, formContact);
-  layout.append(gallery, copy);
 
   const about = node("section", "detail-about");
   about.append(
@@ -435,6 +388,7 @@ function renderPropertyDetail() {
     node("h2", "", "Sobre o imóvel"),
     node("p", "detail-description", activeProperty.descricao),
   );
+  layout.append(about, copy);
 
   const mediaSection = node("section", "property-video-section");
   if (
@@ -471,31 +425,8 @@ function renderPropertyDetail() {
     }
   }
 
-  detailContent.replaceChildren(breadcrumb, heading, layout, about);
+  detailContent.replaceChildren(breadcrumb, heading, galeria, layout);
   if (mediaSection.childElementCount > 1) detailContent.append(mediaSection);
-}
-
-function setGalleryImage(index) {
-  if (!activeProperty?.gallery?.length) return;
-  activeImageIndex = index;
-  const image = detailContent.querySelector(".detail-gallery-main > img");
-  const count = detailContent.querySelector("#gallery-count");
-  if (image) {
-    image.src = activeProperty.gallery[activeImageIndex].url;
-    image.alt = `${activeProperty.titulo} — imagem ${activeImageIndex + 1}`;
-  }
-  if (count) count.textContent = `${activeImageIndex + 1} / ${activeProperty.gallery.length}`;
-  detailContent.querySelectorAll(".detail-thumbnail").forEach((thumbnail, thumbnailIndex) => {
-    const selected = thumbnailIndex === activeImageIndex;
-    thumbnail.setAttribute("aria-pressed", String(selected));
-    if (selected) thumbnail.scrollIntoView({ block: "nearest", inline: "nearest" });
-  });
-}
-
-function changeGallery(step) {
-  if (!activeProperty?.gallery?.length) return;
-  const images = activeProperty.gallery;
-  setGalleryImage((activeImageIndex + step + images.length) % images.length);
 }
 
 function rememberAttribution() {
