@@ -36,19 +36,61 @@ function formatPrice(value, purpose) {
   const formatted = new Intl.NumberFormat("pt-BR", {
     style: "currency",
     currency: "BRL",
-    maximumFractionDigits: 2,
+    maximumFractionDigits: 0,
   }).format(Number(value));
-  return purpose === "aluguel" ? `${formatted}/mês` : formatted;
+  if (purpose === "aluguel") return `${formatted}/mês`;
+  if (purpose === "lancamento") return `A partir de ${formatted}`;
+  return formatted;
 }
 
-function featureLabel(property) {
-  return [
-    property.tipo,
-    property.metragem != null && `${Number(property.metragem).toLocaleString("pt-BR")} m²`,
-    property.quartos != null && `${property.quartos} quartos`,
-    property.banheiros != null && `${property.banheiros} banheiros`,
-    property.vagas != null && `${property.vagas} vagas`,
-  ].filter(Boolean).join(" · ");
+function purposeLabel(purpose) {
+  return {
+    venda: "Venda",
+    aluguel: "Aluguel",
+    lancamento: "Lançamento",
+  }[purpose] || purpose;
+}
+
+function propertyIcon(name) {
+  const paths = {
+    area: ["M4 4h16v16H4z", "M9 4v4", "M15 4v4", "M4 10h4", "M4 16h4"],
+    bedrooms: ["M3 19V5", "M3 15h18v4", "M7 15V9h5a3 3 0 0 1 3 3v3", "M15 11h3a3 3 0 0 1 3 3v1"],
+    bathrooms: ["M4 12h16v2a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5v-2Z", "M7 12V6a2 2 0 0 1 4 0v1"],
+    parking: ["M5 17 6.5 9h11l1.5 8", "M4 17h16v3H4z", "M7 13h.01", "M17 13h.01", "M9 12h6a2 2 0 0 0 0-4h-3v8"],
+  };
+  const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  icon.setAttribute("class", "property-feature-icon");
+  icon.setAttribute("viewBox", "0 0 24 24");
+  icon.setAttribute("fill", "none");
+  icon.setAttribute("stroke", "currentColor");
+  icon.setAttribute("stroke-width", "1.5");
+  icon.setAttribute("stroke-linecap", "round");
+  icon.setAttribute("stroke-linejoin", "round");
+  icon.setAttribute("aria-hidden", "true");
+  for (const data of paths[name] || []) {
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("d", data);
+    icon.append(path);
+  }
+  return icon;
+}
+
+function appendPropertyFeatures(container, property) {
+  const features = [
+    ["area", property.metragem != null && `${Number(property.metragem).toLocaleString("pt-BR")} m²`, "Metragem"],
+    ["bedrooms", property.quartos, "Quartos"],
+    ["bathrooms", property.banheiros, "Banheiros"],
+    ["parking", property.vagas, "Vagas"],
+  ].filter(([, value]) => value != null && value !== "");
+
+  if (!features.length) return;
+  const list = node("ul", "property-card-features");
+  for (const [iconName, value, label] of features) {
+    const item = node("li");
+    item.append(propertyIcon(iconName), node("span", "", String(value)), node("span", "property-feature-label", label));
+    list.append(item);
+  }
+  container.append(list);
 }
 
 function setCatalogStatus(message, state = "") {
@@ -62,6 +104,7 @@ function propertyCard(property, coverUrl) {
   const article = node("article", "property-card");
   const link = node("a", "property-card-link");
   link.href = `imovel.html?slug=${encodeURIComponent(property.slug)}`;
+  link.setAttribute("aria-label", `Ver imóvel: ${property.titulo}`);
 
   const photoWrap = node("div", "property-photo-wrap");
   if (coverUrl) {
@@ -75,27 +118,27 @@ function propertyCard(property, coverUrl) {
     photoWrap.append(node("span", "property-photo-placeholder", "Imagem não cadastrada"));
   }
   const tags = node("div", "property-tags");
-  tags.append(node("span", "property-tag", property.finalidade));
+  tags.append(node("span", "property-tag", purposeLabel(property.finalidade)));
   if (property.destaque) tags.append(node("span", "property-tag property-tag-featured", "Destaque"));
   photoWrap.append(tags);
 
   const copy = node("div", "property-copy");
-  copy.append(node("h3", "", property.titulo));
   copy.append(node("p", "property-location", locationLabel(property) || "São Luís, MA"));
-  const features = featureLabel(property);
-  if (features) copy.append(node("p", "property-features", features));
+  copy.append(node("h3", "", property.titulo));
   const description = node("p", "property-card-description", property.descricao);
   copy.append(description);
+  appendPropertyFeatures(copy, property);
 
   link.append(photoWrap, copy);
   const bottom = node("div", "property-bottom");
   const price = node("div");
   price.append(
-    node("span", "property-price-label", property.finalidade === "aluguel" ? "Valor mensal" : "Valor"),
+    node("span", "property-price-label", property.finalidade === "aluguel" ? "Valor mensal" : property.finalidade === "lancamento" ? "Valores" : "Valor"),
     node("strong", "property-price", formatPrice(property.preco, property.finalidade)),
   );
-  const action = node("a", "property-action", "Conhecer empreendimento");
+  const action = node("a", "property-action", "Ver imóvel");
   action.href = link.href;
+  action.setAttribute("aria-label", `Ver imóvel: ${property.titulo}`);
   bottom.append(price, action);
   article.append(link, bottom);
   return article;
@@ -113,6 +156,7 @@ async function loadCatalog(page = catalogPage) {
     const result = await getPublishedProperties({ page, pageSize: PAGE_SIZE });
     catalogPage = result.page;
     catalogCount = result.count;
+    propertyTrack.dataset.cardCount = String(result.data.length);
 
     const covers = result.data
       .filter((property) => property.cover_storage_path)
@@ -185,18 +229,22 @@ function propertyMessage(property) {
 
 function appendDetailFeatures(container, property) {
   const features = [
-    ["Metragem", property.metragem != null && `${Number(property.metragem).toLocaleString("pt-BR")} m²`],
-    ["Quartos", property.quartos],
-    ["Banheiros", property.banheiros],
-    ["Vagas", property.vagas],
-    ["Tipo", property.tipo],
-    ["Finalidade", property.finalidade],
+    ["area", property.metragem != null && `${Number(property.metragem).toLocaleString("pt-BR")} m²`, "Metragem"],
+    ["bedrooms", property.quartos, "Quartos"],
+    ["bathrooms", property.banheiros, "Banheiros"],
+    ["parking", property.vagas, "Vagas"],
   ].filter(([, value]) => value != null && value !== "");
 
   if (!features.length) return;
-  const list = node("dl", "detail-features");
-  for (const [label, value] of features) {
-    list.append(node("dt", "", label), node("dd", "", String(value)));
+  const list = node("ul", "detail-features");
+  for (const [iconName, value, label] of features) {
+    const item = node("li", "detail-feature");
+    item.append(
+      propertyIcon(iconName),
+      node("strong", "", String(value)),
+      node("span", "", label),
+    );
+    list.append(item);
   }
   container.append(list);
 }
@@ -277,6 +325,32 @@ function renderPropertyNotFound(message) {
 }
 
 function renderPropertyDetail() {
+  const breadcrumb = node("nav", "property-breadcrumb");
+  breadcrumb.setAttribute("aria-label", "Trilha de navegação");
+  const catalogCrumb = node("a", "", "Imóveis");
+  catalogCrumb.href = "index.html#imoveis";
+  const cityCrumb = node("a", "", "São Luís");
+  cityCrumb.href = "index.html#bairros";
+  breadcrumb.append(
+    catalogCrumb,
+    node("span", "", "›"),
+    cityCrumb,
+    node("span", "", "›"),
+    node("span", "property-breadcrumb-current", activeProperty.titulo),
+  );
+
+  const heading = node("header", "detail-heading");
+  const labels = node("div", "detail-labels");
+  labels.append(
+    node("span", "sample-label", activeProperty.tipo),
+    node("span", "detail-purpose", purposeLabel(activeProperty.finalidade)),
+  );
+  heading.append(
+    labels,
+    node("h1", "", activeProperty.titulo),
+    node("p", "property-location", locationLabel(activeProperty) || "São Luís, MA"),
+  );
+
   const layout = node("div", "detail-layout");
   const gallery = node("div", "detail-gallery");
   const images = activeProperty.gallery;
@@ -285,7 +359,8 @@ function renderPropertyDetail() {
     image.alt = `${activeProperty.titulo} — imagem ${activeImageIndex + 1}`;
     image.loading = "eager";
     image.src = images[activeImageIndex].url;
-    gallery.append(image);
+    const mainImage = node("div", "detail-gallery-main");
+    mainImage.append(image);
     if (images.length > 1) {
       const controls = node("div", "gallery-controls");
       const previous = node("button", "", "←");
@@ -299,7 +374,26 @@ function renderPropertyDetail() {
       next.setAttribute("aria-label", "Próxima imagem");
       next.addEventListener("click", () => changeGallery(1));
       controls.append(previous, count, next);
-      gallery.append(controls);
+      mainImage.append(controls);
+    }
+    gallery.append(mainImage);
+    if (images.length > 1) {
+      const thumbnails = node("div", "detail-thumbnails");
+      thumbnails.setAttribute("aria-label", "Miniaturas da galeria");
+      images.forEach((galleryImage, index) => {
+        const thumbnail = node("button", "detail-thumbnail");
+        thumbnail.type = "button";
+        thumbnail.setAttribute("aria-label", `Exibir imagem ${index + 1} de ${images.length}`);
+        thumbnail.setAttribute("aria-pressed", String(index === activeImageIndex));
+        const thumbnailImage = node("img");
+        thumbnailImage.src = galleryImage.url;
+        thumbnailImage.alt = "";
+        thumbnailImage.loading = "lazy";
+        thumbnail.append(thumbnailImage);
+        thumbnail.addEventListener("click", () => setGalleryImage(index));
+        thumbnails.append(thumbnail);
+      });
+      gallery.append(thumbnails);
     }
   } else {
     gallery.classList.add("detail-gallery-empty");
@@ -307,18 +401,24 @@ function renderPropertyDetail() {
   }
 
   const copy = node("div", "detail-copy");
-  copy.append(
-    node("span", "sample-label", activeProperty.finalidade),
-    node("h1", "", activeProperty.titulo),
-    node("p", "property-location", locationLabel(activeProperty) || "São Luís, MA"),
-    node("p", "detail-description", activeProperty.descricao),
-  );
   appendDetailFeatures(copy, activeProperty);
   const price = node("div", "detail-price");
   price.append(
-    node("span", "property-price-label", activeProperty.finalidade === "aluguel" ? "Valor mensal" : "Valor"),
+    node("span", "property-price-label", activeProperty.finalidade === "aluguel" ? "Valor mensal" : activeProperty.finalidade === "lancamento" ? "Investimento" : "Valor"),
     node("strong", "property-price", formatPrice(activeProperty.preco, activeProperty.finalidade)),
   );
+  if (
+    activeProperty.finalidade === "venda" &&
+    Number(activeProperty.preco) > 0 &&
+    Number(activeProperty.metragem) > 0
+  ) {
+    const pricePerMeter = new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+      maximumFractionDigits: 0,
+    }).format(Number(activeProperty.preco) / Number(activeProperty.metragem));
+    price.append(node("span", "detail-price-per-meter", `${pricePerMeter} / m²`));
+  }
   const contact = node("a", "button button-dark", "Tenho interesse ↗");
   contact.href = createWhatsAppLink(propertyMessage(activeProperty));
   contact.target = "_blank";
@@ -328,6 +428,13 @@ function renderPropertyDetail() {
   formContact.href = `index.html?empreendimento=${encodeURIComponent(activeProperty.id)}#contato`;
   copy.append(price, contact, formContact);
   layout.append(gallery, copy);
+
+  const about = node("section", "detail-about");
+  about.append(
+    node("p", "eyebrow", "Detalhes"),
+    node("h2", "", "Sobre o imóvel"),
+    node("p", "detail-description", activeProperty.descricao),
+  );
 
   const mediaSection = node("section", "property-video-section");
   if (
@@ -364,21 +471,31 @@ function renderPropertyDetail() {
     }
   }
 
-  detailContent.replaceChildren(layout);
+  detailContent.replaceChildren(breadcrumb, heading, layout, about);
   if (mediaSection.childElementCount > 1) detailContent.append(mediaSection);
+}
+
+function setGalleryImage(index) {
+  if (!activeProperty?.gallery?.length) return;
+  activeImageIndex = index;
+  const image = detailContent.querySelector(".detail-gallery-main > img");
+  const count = detailContent.querySelector("#gallery-count");
+  if (image) {
+    image.src = activeProperty.gallery[activeImageIndex].url;
+    image.alt = `${activeProperty.titulo} — imagem ${activeImageIndex + 1}`;
+  }
+  if (count) count.textContent = `${activeImageIndex + 1} / ${activeProperty.gallery.length}`;
+  detailContent.querySelectorAll(".detail-thumbnail").forEach((thumbnail, thumbnailIndex) => {
+    const selected = thumbnailIndex === activeImageIndex;
+    thumbnail.setAttribute("aria-pressed", String(selected));
+    if (selected) thumbnail.scrollIntoView({ block: "nearest", inline: "nearest" });
+  });
 }
 
 function changeGallery(step) {
   if (!activeProperty?.gallery?.length) return;
   const images = activeProperty.gallery;
-  activeImageIndex = (activeImageIndex + step + images.length) % images.length;
-  const image = detailContent.querySelector(".detail-gallery > img");
-  const count = detailContent.querySelector("#gallery-count");
-  if (image) {
-    image.src = images[activeImageIndex].url;
-    image.alt = `${activeProperty.titulo} — imagem ${activeImageIndex + 1}`;
-  }
-  if (count) count.textContent = `${activeImageIndex + 1} / ${images.length}`;
+  setGalleryImage((activeImageIndex + step + images.length) % images.length);
 }
 
 function rememberAttribution() {
